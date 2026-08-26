@@ -1,8 +1,6 @@
 import Link from "next/link";
 import { recipes } from "@/data/recipes";
 
-const GITHUB_URL = "https://github.com/sdjoan/detox";
-
 function sourceStats(source: "닥터라이블리" | "베르베르") {
   const list = recipes.filter((r) => r.source === source);
   const verified = list.filter((r) => !r.isPlaceholder).length;
@@ -60,14 +58,6 @@ export default function PlanPage() {
             >
               레시피 보러가기 →
             </Link>
-            <a
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-lg border border-neutral-300 px-5 py-2.5 text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100"
-            >
-              GitHub에서 보기
-            </a>
           </div>
         </div>
       </section>
