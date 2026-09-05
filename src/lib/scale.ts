@@ -37,6 +37,12 @@ export interface AggregatedIngredient {
   amount: number;
 }
 
+// "잎채소(로메인 등)"과 "잎채소(케일 등)"처럼 괄호 안 비고만 다른 같은 재료를
+// 합산할 수 있도록 괄호 부분을 제거한 이름으로 정규화한다.
+function normalizeIngredientName(name: string): string {
+  return name.replace(/\([^)]*\)/g, "").trim() || name;
+}
+
 // 여러 레시피의 재료를 이름+단위 기준으로 합산한다 (장보기 리스트용).
 export function aggregateIngredients(
   entries: { recipe: Recipe; mode: ServingMode; cupsPerWeek: number }[]
@@ -46,12 +52,17 @@ export function aggregateIngredients(
   for (const { recipe, mode, cupsPerWeek } of entries) {
     const multiplier = getMultiplier(mode, { ...recipe, cupsPerWeek });
     for (const ing of scaleIngredients(recipe.ingredients, multiplier)) {
-      const key = `${ing.name}__${ing.unit}`;
+      const normalizedName = normalizeIngredientName(ing.name);
+      const key = `${normalizedName}__${ing.unit}`;
       const existing = totals.get(key);
       if (existing) {
         existing.amount += ing.amount;
       } else {
-        totals.set(key, { name: ing.name, unit: ing.unit, amount: ing.amount });
+        totals.set(key, {
+          name: normalizedName,
+          unit: ing.unit,
+          amount: ing.amount,
+        });
       }
     }
   }

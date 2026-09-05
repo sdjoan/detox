@@ -42,8 +42,9 @@ export default async function RecipeDetailPage({
         <p className="mt-2 text-neutral-500">{recipe.description}</p>
 
         {recipe.isPlaceholder && (
-          <p className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-800">
-            ⚠️ {recipe.note ?? "아직 검증되지 않은 값이 표시되고 있습니다."}
+          <p className="mt-4 rounded-lg bg-blue-50 px-4 py-3 text-sm text-blue-800">
+            ℹ️ 이 레시피는 계속 다듬고 있어요. 정확한 용량은 업데이트될 수
+            있어요.
           </p>
         )}
       </div>
