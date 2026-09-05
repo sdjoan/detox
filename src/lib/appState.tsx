@@ -52,11 +52,14 @@ export function AppStateProvider({ children }: { children: React.ReactNode }) {
   const [hydrated, setHydrated] = useState(false);
 
   // localStorage는 서버에 없으므로 마운트 후에만 읽어서 하이드레이션 불일치를 피한다.
+  // (외부 스토리지를 React 상태로 1회 동기화하는 정상 패턴 — 규칙 오탐)
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     setFavorites(readJSON(FAVORITES_KEY, [] as string[]));
     setShoppingList(readJSON(SHOPPING_LIST_KEY, [] as ShoppingListItem[]));
     setHydrated(true);
   }, []);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     if (!hydrated) return;

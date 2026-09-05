@@ -25,12 +25,30 @@ const features = [
   },
 ];
 
-const roadmap = [
-  "장보기 리스트 — 여러 레시피 재료를 한 번에 합산",
-  "레시피 검색 · 필터 (재료, 목적별)",
-  "즐겨찾기 · 나만의 레시피 저장",
-  "영양정보 표기",
+const newFeatures = [
+  {
+    icon: "🔍",
+    title: "검색 · 필터",
+    body: "이름/재료로 검색하고 출처별로 필터링. 즐겨찾기만 모아보기도 가능.",
+  },
+  {
+    icon: "❤️",
+    title: "즐겨찾기",
+    body: "자주 찾는 레시피를 하트로 저장. 브라우저에 남아 다음 방문에도 유지.",
+  },
+  {
+    icon: "🛒",
+    title: "장보기 리스트",
+    body: "여러 레시피를 담아 재료를 이름 단위로 자동 합산. 레시피별 1잔/1주일분도 개별 조정.",
+  },
+  {
+    icon: "🔗",
+    title: "공유하기",
+    body: "레시피 상세에서 바로 공유 — 모바일은 네이티브 공유창(카카오톡 포함), 데스크톱은 링크 복사.",
+  },
 ];
+
+const roadmap = ["베르베르 12종 수치 원본 대조 검증", "영양정보 표기"];
 
 export default function PlanPage() {
   const livly = sourceStats("닥터라이블리");
@@ -42,7 +60,7 @@ export default function PlanPage() {
       <section className="border-b border-neutral-200 bg-gradient-to-b from-emerald-50 to-neutral-50">
         <div className="mx-auto max-w-3xl px-6 py-16 text-center">
           <span className="inline-block rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold tracking-wide text-emerald-700">
-            기획서 · v0.1 MVP
+            기획서 · v0.2
           </span>
           <h1 className="mt-4 text-3xl font-bold text-neutral-900 sm:text-4xl">
             디톡스 스무디 웹앱
@@ -66,9 +84,31 @@ export default function PlanPage() {
         {/* 핵심 기능 */}
         <section>
           <h2 className="text-xl font-bold text-neutral-900">핵심 기능</h2>
-          <p className="mt-1 text-sm text-neutral-500">MVP 범위</p>
+          <p className="mt-1 text-sm text-neutral-500">v0.1 MVP</p>
           <div className="mt-6 grid gap-4 sm:grid-cols-3">
             {features.map((f) => (
+              <div
+                key={f.title}
+                className="rounded-xl border border-neutral-200 bg-white p-5"
+              >
+                <span className="text-2xl">{f.icon}</span>
+                <h3 className="mt-3 text-sm font-semibold text-neutral-900">
+                  {f.title}
+                </h3>
+                <p className="mt-1.5 text-sm text-neutral-500">{f.body}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* 새로 추가된 기능 */}
+        <section>
+          <h2 className="text-xl font-bold text-neutral-900">
+            새로 추가된 기능
+          </h2>
+          <p className="mt-1 text-sm text-neutral-500">v0.2</p>
+          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+            {newFeatures.map((f) => (
               <div
                 key={f.title}
                 className="rounded-xl border border-neutral-200 bg-white p-5"
@@ -190,7 +230,12 @@ export default function PlanPage() {
         <section>
           <h2 className="text-xl font-bold text-neutral-900">기술 스택</h2>
           <div className="mt-4 flex flex-wrap gap-2">
-            {["Next.js (App Router)", "TypeScript", "Tailwind CSS"].map(
+            {[
+              "Next.js (App Router)",
+              "TypeScript",
+              "Tailwind CSS",
+              "localStorage (즐겨찾기·장보기)",
+            ].map(
               (tech) => (
                 <span
                   key={tech}
