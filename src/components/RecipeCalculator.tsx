@@ -10,10 +10,13 @@ import {
 } from "@/lib/scale";
 
 export default function RecipeCalculator({ recipe }: { recipe: Recipe }) {
-  const [mode, setMode] = useState<ServingMode>(
-    recipe.baseUnit === "cup" ? "cup" : "week"
-  );
+  const nativeMode: ServingMode = recipe.baseUnit === "cup" ? "cup" : "week";
+  const [mode, setMode] = useState<ServingMode>(nativeMode);
   const [cupsPerWeek, setCupsPerWeek] = useState(recipe.cupsPerWeek);
+
+  // 원래 단위와 같은 모드를 보고 있을 땐 배수가 항상 1이라 "주당 잔 수"를
+  // 바꿔도 표에 반영되지 않는다 — 이럴 땐 입력을 비활성화해서 헷갈리지 않게 한다.
+  const cupsPerWeekActive = mode !== nativeMode;
 
   const multiplier = getMultiplier(mode, { ...recipe, cupsPerWeek });
   const scaled = useMemo(
@@ -49,28 +52,45 @@ export default function RecipeCalculator({ recipe }: { recipe: Recipe }) {
           </button>
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-neutral-600">
+        <label
+          className={`flex items-center gap-2 text-sm ${
+            cupsPerWeekActive ? "text-neutral-600" : "text-neutral-300"
+          }`}
+        >
           주당
           <input
             type="number"
             min={1}
             max={28}
             value={cupsPerWeek}
+            disabled={!cupsPerWeekActive}
             onChange={(e) =>
               setCupsPerWeek(
                 Math.min(28, Math.max(1, Number(e.target.value) || 1))
               )
             }
-            className="w-16 rounded-md border border-neutral-300 px-2 py-1 text-center"
+            className={`w-16 rounded-md border px-2 py-1 text-center ${
+              cupsPerWeekActive
+                ? "border-neutral-300"
+                : "cursor-not-allowed border-neutral-200 bg-neutral-50 text-neutral-300"
+            }`}
           />
           잔 마신다면
         </label>
       </div>
 
       <p className="text-xs text-neutral-400">
-        {recipe.baseUnit === "batch"
-          ? `※ 카드에 잔 수가 표기되어 있지 않아 하루 1잔 기준 기본값(${recipe.cupsPerWeek}잔)을 가정했어요. 실제 마시는 잔 수에 맞게 조정하세요.`
-          : `※ 1주일분은 위 잔 수 기준(기본 ${recipe.cupsPerWeek}잔)으로 이 레시피를 여러 번 만든 양이에요.`}
+        {cupsPerWeekActive ? (
+          recipe.baseUnit === "batch" ? (
+            `※ 카드에 잔 수가 표기되어 있지 않아 하루 1잔 기준 기본값(${recipe.cupsPerWeek}잔)을 가정했어요. 실제 마시는 잔 수에 맞게 조정하세요.`
+          ) : (
+            `※ 1주일분은 위 잔 수 기준(기본 ${recipe.cupsPerWeek}잔)으로 이 레시피를 여러 번 만든 양이에요.`
+          )
+        ) : recipe.baseUnit === "batch" ? (
+          "※ 지금 보는 1주일분은 카드에 적힌 배치 그대로예요. 위 숫자는 \"1잔\" 보기로 바꿀 때만 쓰여요."
+        ) : (
+          "※ 지금 보는 1잔은 카드에 적힌 분량 그대로예요. 위 숫자는 \"1주일분\" 보기로 바꿀 때만 쓰여요."
+        )}
       </p>
 
       <table className="w-full border-collapse text-sm">

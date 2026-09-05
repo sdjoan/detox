@@ -7,7 +7,6 @@ import { useAppState } from "@/lib/appState";
 const links = [
   { href: "/", label: "레시피" },
   { href: "/shopping-list", label: "장보기" },
-  { href: "/plan", label: "기획서" },
 ];
 
 export default function NavBar() {

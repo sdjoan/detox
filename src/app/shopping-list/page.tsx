@@ -59,70 +59,85 @@ export default function ShoppingListPage() {
       ) : (
         <>
           <section className="space-y-3">
-            {entries.map(({ recipe, mode, cupsPerWeek }) => (
-              <div
-                key={recipe.slug}
-                className="flex flex-wrap items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4"
-              >
-                <div className="min-w-0 flex-1">
-                  <Link
-                    href={`/recipes/${recipe.slug}`}
-                    className="font-medium text-neutral-900 hover:underline"
-                  >
-                    {recipe.name}
-                  </Link>
-                  <p className="text-xs text-neutral-400">{recipe.source}</p>
-                </div>
+            {entries.map(({ recipe, mode, cupsPerWeek }) => {
+              const nativeMode: ServingMode =
+                recipe.baseUnit === "cup" ? "cup" : "week";
+              const cupsPerWeekActive = mode !== nativeMode;
 
-                <div className="inline-flex rounded-lg border border-neutral-300 p-1">
-                  {(["cup", "week"] as ServingMode[]).map((m) => (
-                    <button
-                      key={m}
-                      type="button"
-                      onClick={() =>
-                        updateShoppingListItem(recipe.slug, { mode: m })
-                      }
-                      className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
-                        mode === m
-                          ? "bg-emerald-600 text-white"
-                          : "text-neutral-600 hover:bg-neutral-100"
-                      }`}
-                    >
-                      {m === "cup" ? "1잔" : "1주일분"}
-                    </button>
-                  ))}
-                </div>
-
-                <label className="flex items-center gap-1.5 text-xs text-neutral-500">
-                  주당
-                  <input
-                    type="number"
-                    min={1}
-                    max={28}
-                    value={cupsPerWeek}
-                    onChange={(e) =>
-                      updateShoppingListItem(recipe.slug, {
-                        cupsPerWeek: Math.min(
-                          28,
-                          Math.max(1, Number(e.target.value) || 1)
-                        ),
-                      })
-                    }
-                    className="w-14 rounded-md border border-neutral-300 px-1.5 py-1 text-center"
-                  />
-                  잔
-                </label>
-
-                <button
-                  type="button"
-                  onClick={() => removeFromShoppingList(recipe.slug)}
-                  aria-label="목록에서 제거"
-                  className="ml-auto text-neutral-400 hover:text-red-500"
+              return (
+                <div
+                  key={recipe.slug}
+                  className="flex flex-wrap items-center gap-3 rounded-xl border border-neutral-200 bg-white p-4"
                 >
-                  ✕
-                </button>
-              </div>
-            ))}
+                  <div className="min-w-0 flex-1">
+                    <Link
+                      href={`/recipes/${recipe.slug}`}
+                      className="font-medium text-neutral-900 hover:underline"
+                    >
+                      {recipe.name}
+                    </Link>
+                    <p className="text-xs text-neutral-400">{recipe.source}</p>
+                  </div>
+
+                  <div className="inline-flex rounded-lg border border-neutral-300 p-1">
+                    {(["cup", "week"] as ServingMode[]).map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() =>
+                          updateShoppingListItem(recipe.slug, { mode: m })
+                        }
+                        className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                          mode === m
+                            ? "bg-emerald-600 text-white"
+                            : "text-neutral-600 hover:bg-neutral-100"
+                        }`}
+                      >
+                        {m === "cup" ? "1잔" : "1주일분"}
+                      </button>
+                    ))}
+                  </div>
+
+                  <label
+                    className={`flex items-center gap-1.5 text-xs ${
+                      cupsPerWeekActive ? "text-neutral-500" : "text-neutral-300"
+                    }`}
+                  >
+                    주당
+                    <input
+                      type="number"
+                      min={1}
+                      max={28}
+                      value={cupsPerWeek}
+                      disabled={!cupsPerWeekActive}
+                      onChange={(e) =>
+                        updateShoppingListItem(recipe.slug, {
+                          cupsPerWeek: Math.min(
+                            28,
+                            Math.max(1, Number(e.target.value) || 1)
+                          ),
+                        })
+                      }
+                      className={`w-14 rounded-md border px-1.5 py-1 text-center ${
+                        cupsPerWeekActive
+                          ? "border-neutral-300"
+                          : "cursor-not-allowed border-neutral-200 bg-neutral-50 text-neutral-300"
+                      }`}
+                    />
+                    잔
+                  </label>
+
+                  <button
+                    type="button"
+                    onClick={() => removeFromShoppingList(recipe.slug)}
+                    aria-label="목록에서 제거"
+                    className="ml-auto text-neutral-400 hover:text-red-500"
+                  >
+                    ✕
+                  </button>
+                </div>
+              );
+            })}
           </section>
 
           <section className="mt-8 rounded-xl border border-neutral-200 bg-white p-6">
