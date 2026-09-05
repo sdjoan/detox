@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import RecipeCalculator from "@/components/RecipeCalculator";
+import ShareButton from "@/components/ShareButton";
 import { getRecipeBySlug, recipes } from "@/data/recipes";
 
 export function generateStaticParams() {
@@ -29,9 +30,12 @@ export default async function RecipeDetailPage({
       </Link>
 
       <div className="mt-4">
-        <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
-          {recipe.source}
-        </span>
+        <div className="flex items-center justify-between gap-3">
+          <span className="inline-block rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-700">
+            {recipe.source}
+          </span>
+          <ShareButton title={recipe.name} text={recipe.description} />
+        </div>
         <h1 className="mt-3 text-2xl font-bold text-neutral-900">
           {recipe.name}
         </h1>

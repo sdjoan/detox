@@ -30,3 +30,33 @@ export function getMultiplier(
   }
   return mode === "cup" ? 1 / recipe.cupsPerWeek : 1;
 }
+
+export interface AggregatedIngredient {
+  name: string;
+  unit: string;
+  amount: number;
+}
+
+// 여러 레시피의 재료를 이름+단위 기준으로 합산한다 (장보기 리스트용).
+export function aggregateIngredients(
+  entries: { recipe: Recipe; mode: ServingMode; cupsPerWeek: number }[]
+): AggregatedIngredient[] {
+  const totals = new Map<string, AggregatedIngredient>();
+
+  for (const { recipe, mode, cupsPerWeek } of entries) {
+    const multiplier = getMultiplier(mode, { ...recipe, cupsPerWeek });
+    for (const ing of scaleIngredients(recipe.ingredients, multiplier)) {
+      const key = `${ing.name}__${ing.unit}`;
+      const existing = totals.get(key);
+      if (existing) {
+        existing.amount += ing.amount;
+      } else {
+        totals.set(key, { name: ing.name, unit: ing.unit, amount: ing.amount });
+      }
+    }
+  }
+
+  return Array.from(totals.values()).sort((a, b) =>
+    a.name.localeCompare(b.name, "ko")
+  );
+}
